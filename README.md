@@ -2,6 +2,9 @@
 
 a simple react-natvie component that I created to be used for another project. 
 
+web interactive demo
+https://localspinner.expo.app/
+
 ## Usage
 
 To use, get everything from the components folder and add it to your screen
