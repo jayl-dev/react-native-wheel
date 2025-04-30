@@ -22,7 +22,7 @@ const App = () => {
     return (
         <SpinWheel
             sectionData={generateTestPrizes(8)}
-            wheelSize={300}
+            wheelSize={200}
             getWinner={handleWinner}
         />
     );
