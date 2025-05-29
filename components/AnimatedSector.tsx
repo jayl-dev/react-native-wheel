@@ -55,11 +55,17 @@ const AnimatedSector: React.FC<AnimatedSectorProps> = ({
         litProgress.value = withTiming(isWinner ? 1 : 0, { duration: 500 });
     }, [isWinner, litProgress]);
 
-    const baseColor = sector.color;
-    const litColor = lightenColor(baseColor, 0.3);
+    const isValidColor = (color: string) =>
+        typeof color === 'string' && /^#([0-9A-F]{6}|[0-9A-F]{3})$/i.test(color);
+
+    const baseColor = isValidColor(sector.color) ? sector.color : '#000000';
+    const litColor = isValidColor(baseColor) ? lightenColor(baseColor, 0.3) : '#FFFFFF';
 
     const animatedProps = useAnimatedProps(() => ({
-        fill: interpolateColor(litProgress.value, [0, 1], [baseColor, litColor]),
+        fill:
+            isValidColor(baseColor) && isValidColor(litColor)
+                ? interpolateColor(litProgress.value, [0, 1], [baseColor, litColor])
+                : '#000000',
     }));
 
     const animatedTextProps = useAnimatedProps(() => ({
