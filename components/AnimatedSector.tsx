@@ -38,6 +38,8 @@ interface AnimatedSectorProps {
     labelY: number;
     midAngle: number; // in radians, the midpoint angle of the sector
     isWinner: boolean;
+    longestLabel: string;
+    radius?: number;
 }
 
 const AnimatedSector: React.FC<AnimatedSectorProps> = ({
@@ -47,8 +49,9 @@ const AnimatedSector: React.FC<AnimatedSectorProps> = ({
                                                            labelY,
                                                            midAngle,
                                                            isWinner,
+                                                           longestLabel,
+                                                           radius = 180,
                                                        }) => {
-
     const litProgress = useSharedValue(0);
 
     useEffect(() => {
@@ -60,29 +63,45 @@ const AnimatedSector: React.FC<AnimatedSectorProps> = ({
         return typeof color === 'string' && /^#([0-9A-F]{6}|[0-9A-F]{3})$/i.test(color);
     };
 
-    const baseColor = isValidColor(sector.color) ? sector.color : '#000000';
+    const baseColor = isValidColor(sector.color) ? sector.color : '#FFFFFF';
     const litColor = isValidColor(baseColor) ? lightenColor(baseColor, 0.3) : '#FFFFFF';
 
     const animatedProps = useAnimatedProps(() => ({
         fill:
             isValidColor(baseColor) && isValidColor(litColor)
                 ? interpolateColor(litProgress.value, [0, 1], [baseColor, litColor])
-                : '#000000',
+                : '#FFFFFF',
     }));
 
     const animatedTextProps = useAnimatedProps(() => ({
-        fill: interpolateColor(litProgress.value, [0, 1], ['#333333', '#ffffff']),
+        fill: interpolateColor(litProgress.value, [0, 1], ['#FFFFFFCC', '#ffffff']),
     }));
+
+    // Calculate font size based on the wheel radius and label length
+    const calculateFontSize = (label: string, wheelRadius: number) => {
+        // Base reference: font size 28 at radius 180
+        const scaleFactor = wheelRadius / 180;
+        const baseFontSize = 28 * scaleFactor;
+
+        // Adjust for label length
+        if (label?.length <= 6) return baseFontSize;
+
+        // Reduce font size for longer labels, proportional to wheel size
+        const reductionPerChar = 2 * scaleFactor;
+        return Math.max(baseFontSize - (label?.length - 6) * reductionPerChar, 10 * scaleFactor);
+    };
+
+    const fontSize = calculateFontSize(longestLabel, radius);
 
     return (
         <G>
-            <AnimatedPath d={d} animatedProps={animatedProps} stroke="#fff" strokeWidth="2" />
+            <AnimatedPath d={d} animatedProps={animatedProps} stroke="#ffffffaa" strokeWidth="1" />
             <AnimatedSvgText
                 transform={`rotate(${(midAngle * 180) / Math.PI}, ${labelX}, ${labelY})`}
                 x={labelX}
                 y={labelY}
-                fontSize="16"
-                fontWeight="bold"
+                fontSize={fontSize}
+                fontWeight="1000"
                 textAnchor="middle"
                 alignmentBaseline="middle"
                 animatedProps={animatedTextProps}

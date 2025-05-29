@@ -16,8 +16,6 @@ export interface WheelProps {
 }
 
 const Wheel: React.FC<WheelProps> = ({body, radius, sectors}) => {
-    const x = body.position.x - radius;
-    const y = body.position.y - radius;
     const numberOfSectors = sectors.length;
     const arcSize = (2 * Math.PI) / numberOfSectors;
 
@@ -25,21 +23,34 @@ const Wheel: React.FC<WheelProps> = ({body, radius, sectors}) => {
     if (adjusted < 0) adjusted += 2 * Math.PI;
     const winningIndex = Math.floor(adjusted / arcSize);
 
+    // Calculate the longest label
+    const longestLabel = sectors.reduce(
+        (longest, sector) =>
+            sector.label.length > longest.length ? sector.label : longest,
+        '',
+    );
+
     return (
         <View
             style={[
-                styles.wheel,
+                styles.wheelContainer,
                 {
-                    left: x,
-                    top: y,
                     width: radius * 2,
                     height: radius * 2,
                     borderRadius: radius,
-                    overflow: 'hidden',
                     transform: [{rotate: `${body.angle}rad`}],
                 },
             ]}
         >
+            <View
+                style={[
+                    styles.wheelBorder,
+                    {
+                        borderRadius: radius,
+                        borderWidth: Math.max(2, radius * 0.05),
+                    }
+                ]}
+            />
             <Svg width={radius * 2} height={radius * 2}>
                 {sectors.map((sector, index) => {
                     const startAngle = index * arcSize;
@@ -52,7 +63,7 @@ const Wheel: React.FC<WheelProps> = ({body, radius, sectors}) => {
                     const d = `M ${radius} ${radius} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
 
                     const midAngle = startAngle + arcSize / 2;
-                    const labelRadius = radius * 0.65;
+                    const labelRadius = radius * 0.55;
                     const labelX = radius + labelRadius * Math.cos(midAngle);
                     const labelY = radius + labelRadius * Math.sin(midAngle);
                     const isWinner = winningIndex === index;
@@ -66,6 +77,7 @@ const Wheel: React.FC<WheelProps> = ({body, radius, sectors}) => {
                             labelY={labelY}
                             midAngle={midAngle}
                             isWinner={isWinner}
+                            longestLabel={longestLabel}
                         />
                     );
                 })}
@@ -75,9 +87,19 @@ const Wheel: React.FC<WheelProps> = ({body, radius, sectors}) => {
 };
 
 const styles = StyleSheet.create({
-    wheel: {
+    wheelContainer: {
         position: 'absolute',
         backgroundColor: 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    wheelBorder: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        borderColor: 'rgba(255, 255, 255, 0.5)',
+        zIndex: 1,
     },
 });
 

@@ -6,10 +6,13 @@ import {
     Text,
 } from 'react-native';
 import {
+    GestureHandlerRootView,
     PanGestureHandler,
 } from 'react-native-gesture-handler';
+
 import {GameEngine} from 'react-native-game-engine';
 import Matter from 'matter-js';
+import Svg, { Path, Defs, Filter, FeGaussianBlur, FeOffset, FeMerge, FeMergeNode } from 'react-native-svg';
 
 import Wheel, {Sector} from '@/components/Wheel';
 import {useSpinWheelLogic} from '@/components/SpinWheel/useWheelLogic';
@@ -21,6 +24,7 @@ interface SpinWheelProps {
     wheelSize?: number;
     getWinner: (label: string, index: number) => void;
     onSpinStart?: () => void;
+    key?: string;
 }
 
 const SpinWheel: React.FC<SpinWheelProps> = ({
@@ -73,20 +77,26 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
 
     const gameContainerSize = wheelSize * 2;
 
+    const stopperSize = Math.max(20, wheelSize * 0.15);
+
     return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
         <PanGestureHandler
             onGestureEvent={onGestureEvent}
             onHandlerStateChange={onHandlerStateChange}
         >
-            <View style={[styles.container]}>
+            <View style={styles.container}>
                 <View style={styles.centerContent}>
-                    <View style={{
-                        width: gameContainerSize,
-                        height: gameContainerSize,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        position: 'relative',
-                    }}>
+                    <View
+                        style={[
+                            styles.wheelWrapper,
+                            {
+                                width: gameContainerSize,
+                                height: gameContainerSize,
+                                borderRadius: gameContainerSize / 2,
+                            },
+                        ]}
+                    >
                         <GameEngine
                             style={{
                                 width: gameContainerSize,
@@ -99,52 +109,92 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
                             systems={[Physics]}
                             entities={entities}
                         />
-                        <View style={[
-                            styles.stopper,
-                            {
-                                position: 'absolute',
-                                top: -20,
-                                left: gameContainerSize / 2 - 15,
-                                zIndex: 10,
-                            }
-                        ]}/>
+                        <Stopper size={stopperSize} color="#ff4757" />
                     </View>
-                    <TouchableOpacity style={styles.button}
-                                      onPress={handleSpin}>
-                        <Text style={styles.buttonText}>Spin the Wheel!</Text>
+                    <TouchableOpacity
+                        style={[
+                            styles.button,
+                            {
+                                // Scale button size with wheel size
+                                paddingVertical: Math.max(15, wheelSize * 0.08),
+                                paddingHorizontal: Math.max(20, wheelSize * 0.1),
+                                borderRadius: Math.max(10, wheelSize * 0.05),
+                            }
+                        ]}
+                        onPress={handleSpin}
+                    >
+                        <Text style={[
+                            styles.buttonText,
+                            {fontSize: Math.max(16, wheelSize * 0.09)}
+                        ]}>Spin the Wheel!</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </PanGestureHandler>
+        </GestureHandlerRootView>
+    );
+};
+
+const Stopper = ({ size = 24, color = '#ff4757' }) => {
+    const trianglePath = `M 0 0 L ${size} 0 L ${size / 2} ${size} Z`;
+
+    return (
+        <Svg
+            width={size}
+            height={size}
+            style={{
+                position: 'absolute',
+                top: -(size * 0.6),
+                left: '50%',
+                marginLeft: -(size / 2),
+                zIndex: 10,
+            }}
+        >
+            <Defs>
+                <Filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <FeOffset result="offOut" in="SourceAlpha" dx="0" dy="2" />
+                    <FeGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />
+                    <FeMerge>
+                        <FeMergeNode in="blurOut" />
+                        <FeMergeNode in="SourceGraphic" />
+                    </FeMerge>
+                </Filter>
+            </Defs>
+            <Path
+                d={trianglePath}
+                fill={color}
+                filter="url(#shadow)"
+            />
+        </Svg>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {flex: 1},
+    container: { flex: 1 },
     centerContent: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    wheelWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 8, // For Android shadow
     },
     button: {
         position: 'absolute',
         bottom: 50,
         alignSelf: 'center',
         backgroundColor: '#2ecc71',
-        padding: 20,
-        borderRadius: 10,
     },
-    buttonText: {color: '#fff', fontWeight: 'bold'},
-    stopper: {
-        width: 0,
-        height: 0,
-        borderLeftWidth: 15,
-        borderRightWidth: 15,
-        borderTopWidth: 20,
-        borderStyle: 'solid',
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
-        borderTopColor: '#000',
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold'
     },
 });
 
