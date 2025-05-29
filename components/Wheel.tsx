@@ -1,4 +1,3 @@
-// components/Wheel.tsx
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import Svg from 'react-native-svg';
@@ -22,7 +21,6 @@ const Wheel: React.FC<WheelProps> = ({body, radius, sectors}) => {
     const numberOfSectors = sectors.length;
     const arcSize = (2 * Math.PI) / numberOfSectors;
 
-    // Compute which sector is currently under the stopper at -π/2.
     let adjusted = (-Math.PI / 2 - body.angle) % (2 * Math.PI);
     if (adjusted < 0) adjusted += 2 * Math.PI;
     const winningIndex = Math.floor(adjusted / arcSize);

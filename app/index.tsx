@@ -1,12 +1,13 @@
 import SpinWheel from "@/components/SpinWheel";
 import {Sector} from "@/components/Wheel";
-
+import {
+    View
+} from 'react-native';
 
 function generateTestPrizes(count: number = 6): Sector[] {
     const colors = [
-        '#FF0000', '#00FF00', '#0000FF',
-        '#FFFF00', '#FF00FF', '#00FFFF',
-        '#FFA500', '#800080', '#008000', '#000000'
+        '#e41a1c', '#377eb8', '#4daf4a', '#984ea3',
+        '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'
     ];
     return Array.from({ length: count }, (_, i) => ({
         label: `Prize ${String.fromCharCode(65 + i)}`,
@@ -20,11 +21,13 @@ const App = () => {
     };
 
     return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: "#7FC9FF" }}>
         <SpinWheel
             sectionData={generateTestPrizes(8)}
             wheelSize={200}
             getWinner={handleWinner}
         />
+        </View>
     );
 };
 

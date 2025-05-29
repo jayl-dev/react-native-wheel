@@ -9,7 +9,7 @@ import {
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('window');
 
-export function useWheelGestures(wheel: Matter.Body) {
+export function useWheelGestures(wheel: Matter.Body, handleSpin?: () => void) {
     const initialGestureAngle = useRef<number | null>(null);
     const initialWheelAngle = useRef<number | null>(null);
     const lastAngle = useRef<number | null>(null);
@@ -50,6 +50,7 @@ export function useWheelGestures(wheel: Matter.Body) {
         } else if (event.nativeEvent.oldState === State.ACTIVE) {
             Matter.Body.setStatic(wheel, false);
             Matter.Body.setAngularVelocity(wheel, computedAngularVelocity.current);
+            if (handleSpin) handleSpin();
             initialGestureAngle.current = null;
             initialWheelAngle.current = null;
             lastAngle.current = null;
