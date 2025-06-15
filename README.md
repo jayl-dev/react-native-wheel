@@ -16,6 +16,7 @@ const App = () => {
     };
 
     return (
+        {/* add victory.wav to assets folder if you want a sound to play on victory/winner */}
         <SpinWheel
             sectionData={[
                 { label: 'YES', color: '#FF0000' },
@@ -23,6 +24,8 @@ const App = () => {
             ]}
             wheelSize={300}
             getWinner={handleWinner}
+            enableSound={true}
+            soundFrequency={500} //lower frequency = more physical sound -- higher frequency = more electronic sound
         />
     );
 };
