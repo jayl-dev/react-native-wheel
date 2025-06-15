@@ -29,7 +29,7 @@ const App = () => {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: "#7FC9FF" }}>
-            //add victory.wav to assets folder if you want a sound to play on victory/winner
+            {/* add victory.wav to assets folder if you want a sound to play on victory/winner */}
             <SpinWheel
                 sectionData={generateTestPrizes(8)}
                 wheelSize={180}
