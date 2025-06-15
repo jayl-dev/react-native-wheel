@@ -25,14 +25,18 @@ interface SpinWheelProps {
     getWinner: (label: string, index: number) => void;
     onSpinStart?: () => void;
     key?: string;
+    enableSound?: boolean;
+    soundFrequency?: number;
 }
 
 const SpinWheel: React.FC<SpinWheelProps> = ({
-                                                 sectionData,
-                                                 wheelSize = 150,
-                                                 getWinner,
-                                                 onSpinStart,
-                                             }) => {
+    sectionData,
+    wheelSize = 150,
+    getWinner,
+    onSpinStart,
+    enableSound = true,
+    soundFrequency = 700,
+}) => {
     const engine = useRef(Matter.Engine.create({enableSleeping: false})).current;
     engine.world.gravity.y = 0;
 
@@ -67,7 +71,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
         return entities;
     };
 
-    const {spinWheel} = useSpinWheelLogic(wheel, sectionData, getWinner);
+    const {spinWheel} = useSpinWheelLogic(wheel, sectionData, getWinner, enableSound, soundFrequency);
 
     const handleSpin = () => {
         onSpinStart && onSpinStart();
@@ -76,7 +80,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
     const {onGestureEvent, onHandlerStateChange} = useWheelGestures(wheel, handleSpin);
 
     const gameContainerSize = wheelSize * 2;
-
+    
     const stopperSize = Math.max(20, wheelSize * 0.15);
 
     return (
@@ -111,7 +115,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
                         />
                         <Stopper size={stopperSize} color="#ff4757" />
                     </View>
-                    <TouchableOpacity
+                    <TouchableOpacity 
                         style={[
                             styles.button,
                             {
@@ -144,7 +148,7 @@ const Stopper = ({ size = 24, color = '#ff4757' }) => {
             height={size}
             style={{
                 position: 'absolute',
-                top: -(size * 0.6),
+                top: -(size * 0.6), 
                 left: '50%',
                 marginLeft: -(size / 2),
                 zIndex: 10,
@@ -192,9 +196,9 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#2ecc71',
     },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold'
+    buttonText: { 
+        color: '#fff', 
+        fontWeight: 'bold' 
     },
 });
 
