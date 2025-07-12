@@ -2,8 +2,9 @@
 
 a simple react-natvie component that I created to be used for another project. 
 
-web interactive demo
-https://localspinner.expo.app/
+see it in action in a demo app
+https://spin.expo.app/
+
 
 ## Usage
 
@@ -30,6 +31,8 @@ const App = () => {
     );
 };
 ```
+web interactive demo
+https://localspinner.expo.app/
 
 
 ## Screenshots
