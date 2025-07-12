@@ -2,8 +2,8 @@
 
 a simple react-natvie component that I created to be used for another project. 
 
-see it in action in a demo app
-https://spin.expo.app/
+see it in action in a mobile PWA app
+https://spin.expo.app/ 
 
 
 ## Usage
